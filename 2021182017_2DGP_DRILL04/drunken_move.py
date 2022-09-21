@@ -11,5 +11,5 @@ def drunken_move():
 
 turtle.shape('turtle')
 
-turtle.onkey(drunken_move, ' ')
-#turtle.listen()
+turtle.onkeypress(drunken_move, ' ')
+turtle.listen()
