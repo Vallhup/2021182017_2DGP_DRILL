@@ -1,7 +1,7 @@
 from pico2d import *
 
 open_canvas()
-character = load_image("drill 6 sprite.jpg")
+character = load_image("drill 7 sprite.jpg")
 
 def Idle(x, y):
     start_x, start_y = 200, 385
