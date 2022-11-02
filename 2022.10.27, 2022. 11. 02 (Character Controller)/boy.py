@@ -1,14 +1,48 @@
 from pico2d import *
 
 # 이벤트 정의
-RD, LD, RU, LU, TIMER = range(5)
+RD, LD, RU, LU, TIMER, AD = range(6)
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT) : RD,
     (SDL_KEYDOWN, SDLK_LEFT) : LD,
     (SDL_KEYUP, SDLK_RIGHT) : RU,
-    (SDL_KEYUP, SDLK_LEFT) : LU
+    (SDL_KEYUP, SDLK_LEFT) : LU,
+    (SDL_KEYDOWN, SDLK_a) : AD
 }
+
+class AUTO_RUN:
+    @staticmethod
+    def enter(self, event):
+        print('ENTER AUTO_RUN')
+        if event == AD:
+            self.dir = self.face_dir
+
+    @staticmethod
+    def exit(self):
+        print('EXIT AUTO_RUN')
+        self.face_dir = self.dir
+        self.dir = 0
+
+    @staticmethod
+    def do(self):
+        self.frame = (self.frame + 1) % 8
+        self.x += self.dir
+        self.x = clamp(0, self.x, 800)
+
+        if self.x >= 800:
+            self.dir, self.face_dir = -1, -1
+
+        elif self.x <= 0:
+            self.dir, self.face_dir = 1, 1
+
+    @staticmethod
+    def draw(self):
+        if self.dir == -1:
+            self.image.clip_draw(self.frame*100, 0, 100, 100, self.x, self.y + 25, 200, 200)
+
+        elif self.dir == 1:
+            self.image.clip_draw(self.frame*100, 100, 100, 100, self.x, self.y + 25, 200, 200)
 
 class SLEEP:
     @staticmethod # Grouping하는 클래스라는 것을 명시
@@ -99,9 +133,10 @@ class RUN:
             self.image.clip_draw(self.frame*100, 100, 100, 100, self.x, self.y)
 
 next_state = {
-    IDLE : {RU : RUN, LU : RUN, RD : RUN, LD : RUN, TIMER : SLEEP},
-    RUN  : {RU : IDLE, LU : IDLE, LD : IDLE, RD : IDLE},
-    SLEEP: {RD : RUN, LD : RUN, RU : RUN, LU : RUN}
+    IDLE : {RU : RUN, LU : RUN, RD : RUN, LD : RUN, TIMER : SLEEP, AD : AUTO_RUN},
+    RUN  : {RU : IDLE, LU : IDLE, LD : IDLE, RD : IDLE, AD : AUTO_RUN},
+    SLEEP: {RD : RUN, LD : RUN, RU : RUN, LU : RUN},
+    AUTO_RUN : {RD : RUN, LD : RUN, RU : RUN, LU : RUN, AD : IDLE}
 }
 
 class Boy:
