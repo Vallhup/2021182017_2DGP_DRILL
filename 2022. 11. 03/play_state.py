@@ -7,6 +7,7 @@ from boy import Boy
 
 boy = None
 grass = None
+front_grass = None
 
 def handle_events():
     events = get_events()
@@ -21,17 +22,17 @@ def handle_events():
 
 # 초기화
 def enter():
-    global boy, grass
-    boy = Boy()
+    global boy, grass, front_grass
+    boy = Boy(400, 45)
     grass = Grass()
+    front_grass = Grass(400, 5)
     game_world.add_object(boy, 1)
     game_world.add_object(grass, 0)
+    game_world.add_object(front_grass, 1)
 
 # 종료
 def exit():
-    global boy, grass
-    del boy
-    del grass
+    game_world.clear()
 
 def update():
     for game_object in game_world.all_objects():
